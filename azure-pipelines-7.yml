@@ -1,0 +1,24 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: UiPathPack@3
+  inputs:
+    packagePath: '$(Build.SourcesDirectory)\UiPath Automation'
+    version: '1.0.$(Build.BuildId)'
+
+- task: UiPathDeploy@3
+  inputs:
+    orchestratorConnection: 'UiPathConnection'
+    packagesPath: '$(Build.ArtifactStagingDirectory)\*.nupkg'
+    folderName: 'Default'
+
+- task: UiPathJob@3
+  inputs:
+    orchestratorConnection: 'UiPathConnection'
+    processName: 'DevOps test'
+    folderName: 'Default'
+    strategy: 'Specific'
