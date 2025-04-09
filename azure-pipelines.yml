@@ -1,27 +1,25 @@
-# Starter pipeline
-
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+- main  # or your branch
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'windows-latest'
+
+variables:
+  orchestratorTenant: 'default'
+  orchestratorFolder: 'Shared'
+  robotAccount: 'your_robot_username'
+  robotPassword: '$(UiPathPassword)'
+  orchestratorUrl: 'https://cloud.uipath.com/YOUR_ACCOUNT'
+  releaseName: 'LoginTestAutomation'
+  testCase: 'LoginTest_ValidCredentials'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: UiPathInstallPlatform@1
+  displayName: 'Install UiPath CLI'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-- task: UiPathRunJob@5
+- task: UiPathRunTests@2
+  displayName: 'Run UiPath Tests'
   inputs:
-    orchestratorConnection: 'Connection of Ui&DevOps'
-    processName: 'CaseX'
-    folderName: 'CaseX'
-    user: 'vm-wwood\vmadmin'
-    machine: 'vm-wwood'
+    testTarget: 'TestSet'
+    orchestratorConnection: 'UiPath-Orchestrator-Connection'
+    testSet: 'LoginTestSet'
